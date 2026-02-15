@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truco Connect - Juego Oficial</title>
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/1005/1005141.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1a242f;
+            color: white;
+        }
+
+        /* Cabecera */
+        .header {
+            background-color: #2d3e50;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #e67e22;
+        }
+
+        .header h1 {
+            color: #e67e22;
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .monedas {
+            background-color: #27ae60;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-amarillo {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        .btn-amarillo:hover {
+            background-color: #d35400;
+        }
+
+        .btn-verde {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-verde:hover {
+            background-color: #2ecc71;
+        }
+
+        .btn-azul {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-azul:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-rojo {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-rojo:hover {
+            background-color: #c0392b;
+        }
+
+        /* Contenedor principal */
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 2rem;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Salón de juegos */
+        .salon-juegos {
+            flex: 3;
+            background-color: #2d3e50;
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-width: 300px;
+        }
+
+        .salon-juegos h2 {
+            color: #e67e22;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .mesas-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .mesa {
+            background-color: #34495e;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mesa:hover {
+            border-color: #e67e22;
+            transform: translateY(-5px);
+        }
+
+        /* Panel lateral */
+        .panel-lateral {
+            flex: 1;
+            background-color: #2d3e50;
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-width: 250px;
+        }
+
+        .panel-lateral h2 {
+            color: #e67e22;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .opcion {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #34495e;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Modal de pagos */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background-color: #2d3e50;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            color: #e67e22;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .campo-form {
+            margin-bottom: 1rem;
+        }
+
+        .campo-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .campo-form input, .campo-form select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        /* Pantalla de juego */
+        .pantalla-juego {
+            display: none;
+            background-color: #2d3e50;
+            border-radius: 10px;
+            padding: 1.5rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            width: 100%;
+        }
+
+        .juego-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 1rem;
+        }
+
+        .jugadores-info {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .jugador {
+            background-color: #34495e;
+            padding: 0.8rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .puntos {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        .mesa-juego {
+            background-color: #1e824c;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 1rem 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .cartas-mesa {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .carta {
+            width: 80px;
+            height: 120px;
+            background-color: white;
+            border-radius: 5px;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 2px solid #333;
+        }
+
+        .carta-oculta {
+            background-color: #e67e22;
+            color: transparent;
+        }
+
+        .cartas-jugador {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .carta-jugador {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .carta-jugador:hover {
+            transform: translateY(-10px);
+        }
+
+        .acciones-juego {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .mensaje-juego {
+            background-color: #34495e;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .cartas-jugador {
+                gap: 0.5rem;
+            }
+
+            .carta {
+                width: 60px;
+                height: 90px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabecera -->
+    <header class="header">
+        <h1>TRUCO CONNECT 🃏</h1>
+        <div class="user-info">
+            <div class="monedas" id="monedas-usuario">1000 $TRU</div>
+            <button class="btn btn-amarillo" onclick="abrirModal('modal-ingreso')">Depositar</button>
+            <button class="btn btn-azul" onclick="abrirModal('modal-retiro')">Retirar</button>
+        </div>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main class="main-container" id="contenedor-principal">
+        <!-- Salón de juegos -->
+        <section class="salon-juegos">
+            <h2>🎯 SALÓN DE JUEGOS</h2>
+            <div class="mesas-container" id="mesas-container">
+                <!-- Mesa 1 -->
+                <div class="mesa" onclick="unirseAMesa(1)">
+                    <h3>Mesa #1</h3>
+                    <p>Tipo: 1vs1</p>
+                    <p>Apuesta: 50 $TRU</p>
+                    <p>Jugadores: 1/2</p>
+                    <button class="btn btn-verde" style="margin-top: 0.5rem;">Unirse</button>
+                </div>
+                <!-- Mesa 2 -->
+                <div class="mesa" onclick="unirseAMesa(2)">
+                    <h3>Mesa #2</h3>
+                    <p>Tipo: 2vs2</p>
+                    <p>Apuesta: 100 $TRU</p>
+                    <p>Jugadores: 2/4</p>
+                    <button class="btn btn-verde" style="margin-top: 0.5rem;">Unirse</button>
+                </div>
+                <!-- Mesa 3 -->
+                <div class="mesa" onclick="unirseAMesa(3)">
+                    <h3>Mesa #3</h3>
+                    <p>Tipo: Torneo</p>
+                    <p>Apuesta: 200 $TRU</p>
+                    <p>Jugadores: 6/8</p>
+                    <button class="btn btn-verde" style="margin-top: 0.5rem;">Unirse</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel lateral -->
+        <aside class="panel-lateral">
+            <h2>📊 OPCIONES</h2>
+            <div class="opcion" onclick="abrirModal('modal-crear-mesa')">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828775.png" alt="Crear mesa" style="width: 50px; height: 50px; margin-bottom: 0.5rem;">
+                <h3>Crear Mesa</h3>
+                <p>Configura tu propia partida</p>
+            </div>
+            <div class="opcion" onclick="window.location.href='#ranking'">
+                <img src="https://cdn-icons-png.flaticon.com/512/1047/1047033.png" alt="Ranking" style="width: 50px; height: 50px; margin-bottom: 0.5rem;">
+                <h3>Ranking</h3>
+                <p>Ver los mejores jugadores</p>
+            </div>
+            <div class="opcion" onclick="window.location.href='#reglas'">
+                <img src="https://cdn-icons-png.flaticon.com/512/206/206647.png" alt="Reglas" style="width: 50px; height: 50px; margin-bottom: 0.5rem;">
+                <h3>Reglas del Truco</h3>
+                <p>Revisa las normas oficiales</p>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Pantalla de juego -->
+    <div id="pantalla-juego" class="pantalla-juego">
+        <div class="juego-header">
+            <h2>🎲 PARTIDA EN CURSO - MESA #1</h2>
+            <div class="jugadores-info">
+                <div class="jugador">
+                    <p>TÚ</p>
+                    <p class="puntos" id="puntos-usuario">0</p>
+                </div>
+                <div class="jugador">
+                    <p>OPONENTE</p>
+                    <p class="puntos" id="puntos-oponente">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mensaje-juego" id="mensaje-juego">¡La partida comienza! Se reparten las cartas...</div>
+
+        <div class="mesa-juego">
+            <h3>CARTAS EN LA MESA</h3>
+            <div class="cartas-mesa" id="cartas-mesa">
+                <!-- Aquí aparecen las cartas jugadas -->
+            </div>
+        </div>
+
+        <div>
+            <h3 style="text-align: center; color: #e67e22; margin-bottom: 1rem;">TUS CARTAS</h3>
+            <div class="cartas-jug
